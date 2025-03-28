@@ -1,7 +1,6 @@
 import argparse
 import csv
 import os
-import sys
 import time
 from pymmcore_plus import CMMCorePlus
 from pymmcore_plus.mda import MDAEngine
@@ -112,3 +111,4 @@ finally:
     if args.config:
         mmc.setConfig("PMT Power (HV)", "Off")
     mmc.setShutterOpen(False)
+
