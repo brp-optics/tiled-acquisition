@@ -1,5 +1,7 @@
 import argparse
 import csv
+import os
+import sys
 import time
 from pymmcore_plus import CMMCorePlus
 from pymmcore_plus.mda import MDAEngine
@@ -8,7 +10,7 @@ from useq import MDAEvent, MDASequence, TIntervalLoops
 parser = argparse.ArgumentParser()
 parser.add_argument("position_csv", help="CSV file containing X, Y, Z")
 parser.add_argument(
-    "--nframes",
+    "--frames",
     type=int,
     metavar="N",
     default=1,
@@ -40,24 +42,33 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+
+# Set working directory to MICROMANAGER_PATH while loading devices so that
+# OpenScan can find its device modules.
+if "MICROMANAGER_PATH" not in os.environ:
+    raise RuntimeError("Environment variable MICROMANAGER_PATH must be set")
+save_cwd = os.getcwd()
+os.chdir(os.environ["MICROMANAGER_PATH"])
+
+
 # Create the core instance.
 mmc = CMMCorePlus.instance()
 mmc.enableDebugLog(True)
 if args.config:
-    print("Loading config...")
-    input("Press enter")
     mmc.loadSystemConfiguration(args.config)
-    print("Loaded config")
 else:
     mmc.loadSystemConfiguration()
 
+os.chdir(save_cwd)
+
+
 if args.config:
-    mmc.setConfig("Chennels", "PhotonCounting Only")
+    mmc.setConfig("Channels", "PhotonCounting Only")
     mmc.setConfig("FilterWheel", "457-50")
     mmc.setConfig("Lens", "20X 0.75 Nikon")
-    mmc.setConfig("Resolution (pixels)", args.resolution)
-    mmc.setConfig("Pockels Cell (V)", args.eom)
-    mmc.setConfig("PMT Gain (HV)", args.pmtgain)
+    mmc.setConfig("Resolution (pixels)", str(args.resolution))
+    mmc.setProperty("NIDAQAO-Dev2/ao1", "Voltage", args.eom)
+    mmc.setProperty("DCCModule1", "C3_GainHV", args.pmtgain)
     if args.no_sync_check:
         mmc.setConfig("FLIMCheckSync", "No")
 
@@ -74,7 +85,7 @@ with open(args.position_csv, newline="") as f:
 # Create a super-simple sequence, with one event
 mda_sequence = MDASequence(
     stage_positions=xyzs,
-    time_plan=TIntervalLoops(interval=0, loops=args.nframes),
+    time_plan=TIntervalLoops(interval=0, loops=args.frames),
     axis_order="pt",
 )
 
