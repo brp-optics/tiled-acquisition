@@ -124,7 +124,7 @@ wheels = [
 
 [[package]]
 name = "pydantic"
-version = "2.11.0"
+version = "2.11.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "annotated-types" },
@@ -132,9 +132,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "typing-inspection" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/82/2a/4ba34614269b1e12a28b9fe54710983f5c3679f945797e86250c6269263f/pydantic-2.11.0.tar.gz", hash = "sha256:d6a287cd6037dee72f0597229256dfa246c4d61567a250e99f86b7b4626e2f41", size = 782184 }
+sdist = { url = "https://files.pythonhosted.org/packages/93/a3/698b87a4d4d303d7c5f62ea5fbf7a79cab236ccfbd0a17847b7f77f8163e/pydantic-2.11.1.tar.gz", hash = "sha256:442557d2910e75c991c39f4b4ab18963d57b9b55122c8b2a9cd176d8c29ce968", size = 782817 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/09/2c/3a0a1b022bb028e4cd455c69a17ceaad809bf6763c110d093efc0d8f67aa/pydantic-2.11.0-py3-none-any.whl", hash = "sha256:d52535bb7aba33c2af820eaefd866f3322daf39319d03374921cd17fbbdf28f9", size = 442591 },
+    { url = "https://files.pythonhosted.org/packages/cc/12/f9221a949f2419e2e23847303c002476c26fbcfd62dc7f3d25d0bec5ca99/pydantic-2.11.1-py3-none-any.whl", hash = "sha256:5b6c415eee9f8123a14d859be0c84363fec6b1feb6b688d6435801230b56e0b8", size = 442648 },
 ]
 
 [[package]]
@@ -191,7 +191,7 @@ wheels = [
 
 [[package]]
 name = "pymmcore-plus"
-version = "0.13.5"
+version = "0.13.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
@@ -204,22 +204,22 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "useq-schema" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ad/24/e9b2f962151e856f33a92ab9a3a482e5d6c43dcc3887c0fc3d9e5380e82d/pymmcore_plus-0.13.5.tar.gz", hash = "sha256:6fdec04a8ca91e31cdde25750c16e69b5d7db71331b9e44669780172bac000aa", size = 167717 }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/6b/3e843372d878475c7a81ad548ee4ff82bfe17be93f3d0705eba9d49fc288/pymmcore_plus-0.13.6.tar.gz", hash = "sha256:3a153d4461025e66710d72f87146cf340940eb16daee627acd861b5c38e7faa4", size = 170742 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/b8/83a311661f74ac9dde60b5c59fd14328e3a5aa83ad801eb6a14cb2e1a222/pymmcore_plus-0.13.5-py3-none-any.whl", hash = "sha256:e053a32eae4fca995b94fe000bc915f0d74b1488f0978976a702baf7cc041b35", size = 171513 },
+    { url = "https://files.pythonhosted.org/packages/5b/b4/aec7eb1791d5edafad114e8caf3bf03aac3834a5134dfc2c6477c27513a4/pymmcore_plus-0.13.6-py3-none-any.whl", hash = "sha256:c65f9858182cf8a0fa3d1517a288261a161cdeea2a1dc01efcebbd25252a60be", size = 174091 },
 ]
 
 [[package]]
 name = "rich"
-version = "13.9.4"
+version = "14.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "markdown-it-py" },
     { name = "pygments" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/3a/0316b28d0761c6734d6bc14e770d85506c986c85ffb239e688eeaab2c2bc/rich-13.9.4.tar.gz", hash = "sha256:439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098", size = 223149 }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/53/830aa4c3066a8ab0ae9a9955976fb770fe9c6102117c8ec4ab3ea62d89e8/rich-14.0.0.tar.gz", hash = "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725", size = 224078 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/19/71/39c7c0d87f8d4e6c020a393182060eaefeeae6c01dab6a84ec346f2567df/rich-13.9.4-py3-none-any.whl", hash = "sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90", size = 242424 },
+    { url = "https://files.pythonhosted.org/packages/0d/9b/63f4c7ebc259242c89b3acafdb37b41d1185c07ff0011164674e9076b491/rich-14.0.0-py3-none-any.whl", hash = "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0", size = 243229 },
 ]
 
 [[package]]
@@ -303,14 +303,14 @@ wheels = [
 
 [[package]]
 name = "useq-schema"
-version = "0.7.1"
+version = "0.7.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
     { name = "pydantic" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bf/18/25d93997b560f6e1a98c4a334fe7d1b9e7b74d603095eebf804724b802e1/useq_schema-0.7.1.tar.gz", hash = "sha256:288e07ca13b2c84d0d8686622f1c4d4c7e08a4cfe35038775516d4237d56f717", size = 68000 }
+sdist = { url = "https://files.pythonhosted.org/packages/8e/d1/ecc1bb1177293c06995b59ba2dc2e3070eff437e5a7ab401844e9523f976/useq_schema-0.7.2.tar.gz", hash = "sha256:6c27e952e071791fd61473b21c6b2b5959420e8971a9fdfaf7dccf9b7825f934", size = 68035 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/48/ac/3becd246aeca5c141ecce03491fed1c867cc1d65c5a1066ec2a4a63d9e98/useq_schema-0.7.1-py3-none-any.whl", hash = "sha256:9e20d2a398982f6fa3159fce1839d626ae584e110895c614951972e4d11d696d", size = 55173 },
+    { url = "https://files.pythonhosted.org/packages/47/4f/791914c3e128aaf46bbb14810714f05a0d28fa09981d2f618d76337881b4/useq_schema-0.7.2-py3-none-any.whl", hash = "sha256:a776a60879aafd35063f0b3929c796c934920da3b7dd58cdcf1420c8ddd05326", size = 55208 },
 ]
