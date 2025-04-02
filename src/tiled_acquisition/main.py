@@ -88,8 +88,13 @@ def looks_like_pmt_shut_off(image):
     return np.all(checked_portion == 0)
 
 
-def reset_pmt():
-    pass  # TODO
+def reset_pmt(args, mmc):
+    if args.config:
+        mmc.setConfig("PMT Power (HV)", "Off")
+        mmc.setProperty("DCCModule2", "ClearOverloads", "Clear")
+        time.sleep(0.1)
+        mmc.setConfig("PMT Power (HV)", "On")
+        time.sleep(5.0)
 
 
 def read_poslist(filename):
@@ -108,6 +113,10 @@ def read_poslist(filename):
 
 # Custom acquisition engine to add PMT overload checking
 class PMTCheckingEngine(MDAEngine):
+    def __init__(self, mmc, args):
+        super().__init__(mmc)
+        self.__args = args
+
     def exec_event(self, event: MDAEvent):
         # TODO Set FLIM filename
         result = super().exec_event(event)
@@ -119,7 +128,7 @@ class PMTCheckingEngine(MDAEngine):
                 print(
                     f"Resetting PMT at position {event.index['p']} at (x, y) = ({event.x_pos}, {event.y_pos})"
                 )
-                reset_pmt()
+                reset_pmt(self.__args, self.mmcore)
                 break
 
         return result
@@ -138,7 +147,7 @@ def main():
         axis_order="pt",
     )
 
-    mmc.mda.set_engine(PMTCheckingEngine(mmc))
+    mmc.mda.set_engine(PMTCheckingEngine(mmc, args))
     mmc.mda.engine.use_hardware_sequencing = True
 
     try:
