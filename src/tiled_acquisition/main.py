@@ -146,7 +146,14 @@ def main():
             mmc.setConfig("PMT Power (HV)", "On")
         time.sleep(5.0)
         thd = mmc.run_mda(mda_sequence)
-        thd.join()
+        while thd.is_alive():
+            try:
+                thd.join(timeout=0.1)
+            except:
+                print("Canceling MDA due to exception")
+                mmc.mda.cancel()
+                thd.join()
+                raise
     finally:
         print("Shutting down...")
         if args.config:
