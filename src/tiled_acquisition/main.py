@@ -1,6 +1,8 @@
 import argparse
 import csv
 import os
+from pathlib import Path
+import sys
 import time
 import numpy as np
 from pymmcore_plus import CMMCorePlus
@@ -9,7 +11,7 @@ from useq import MDAEvent, MDASequence, TIntervalLoops
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(fromfile_prefix_chars="@")
     parser.add_argument("position_csv", help="CSV file containing X, Y, Z")
     parser.add_argument(
         "--frames",
@@ -46,6 +48,7 @@ def parse_args():
     parser.add_argument(
         "--no-sync-check", action="store_true", help="Disable check for SYNC signal"
     )
+    parser.add_argument("--save", metavar="DIRNAME", help="Destination to save images")
     return parser.parse_args()
 
 
@@ -75,6 +78,11 @@ def setup_hardware(args):
         mmc.setProperty("DCCModule2", "C3_GainHV", args.pmtgain)
         if args.no_sync_check:
             mmc.setConfig("FLIMCheckSync", "No")
+        mmc.setProperty(
+            "OSc-LSM",
+            "BH-TCSPC-FLIMFileSaving",
+            ("Yes" if args.save is not None else "No"),
+        )
 
     return mmc
 
@@ -97,6 +105,24 @@ def reset_pmt(args, mmc):
         time.sleep(5.0)
 
 
+def make_sdt_prefix(args, number):
+    return f"{args.save}/pos_{number:04d}"
+
+
+def set_sdt_filename(mmc, prefix):
+    mmc.setProperty("OSc-LSM", "BH-TCSPC-FLIMFileNamePrefix", prefix)
+
+
+def rename_sdt_files(args, prefix):
+    if args.save is None:
+        return
+    extensions = ("spc", "sdt", "json")
+    for ext in extensions:
+        original = f"{prefix}_0000.{ext}"
+        renamed = f"{prefix}.{ext}"
+        os.rename(original, renamed)
+
+
 def read_poslist(filename):
     with open(filename, newline="") as f:
         reader = csv.reader(f)
@@ -116,17 +142,25 @@ class PMTCheckingEngine(MDAEngine):
     def __init__(self, mmc, args):
         super().__init__(mmc)
         self.__args = args
+        self.__event_counter = 0
 
     def exec_event(self, event: MDAEvent):
-        # TODO Set FLIM filename
+        sdt_prefix = make_sdt_prefix(self.__args, self.__event_counter)
+        self.__event_counter += 1
+
+        set_sdt_filename(self.mmcore, sdt_prefix)
+
         result = super().exec_event(event)
         result = list(result)  # Originally a generator
+
+        rename_sdt_files(self.__args, sdt_prefix)
 
         for image in unaccumulate_images([p.image for p in result]):
             if looks_like_pmt_shut_off(image):
                 event = result[0].event
                 print(
-                    f"Resetting PMT at position {event.index['p']} at (x, y) = ({event.x_pos}, {event.y_pos})"
+                    f"Resetting PMT at position {event.index['p']} at (x, y) = ({event.x_pos}, {event.y_pos})",
+                    file=sys.stderr,
                 )
                 reset_pmt(self.__args, self.mmcore)
                 break
@@ -136,6 +170,12 @@ class PMTCheckingEngine(MDAEngine):
 
 def main():
     args = parse_args()
+
+    if args.save is not None and Path(args.save).exists():
+        print(f"The save directory {args.save} already exists", file=sys.stderr)
+        sys.exit(1)
+    if args.save is not None:
+        os.mkdir(args.save)
 
     mmc = setup_hardware(args)
 
@@ -159,12 +199,12 @@ def main():
             try:
                 thd.join(timeout=0.1)
             except:
-                print("Canceling MDA due to exception")
+                print("Canceling MDA due to exception", file=sys.stderr)
                 mmc.mda.cancel()
                 thd.join()
                 raise
     finally:
-        print("Shutting down...")
+        print("Shutting down...", file=sys.stderr)
         if args.config:
             mmc.setConfig("PMT Power (HV)", "Off")
         mmc.setShutterOpen(False)

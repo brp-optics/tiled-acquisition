@@ -1,0 +1,2 @@
+--no-check-sync
+--frames=2
