@@ -109,12 +109,13 @@ def make_sdt_prefix(args, number):
     return f"{args.save}/pos_{number:04d}"
 
 
-def set_sdt_filename(mmc, prefix):
-    mmc.setProperty("OSc-LSM", "BH-TCSPC-FLIMFileNamePrefix", prefix)
+def set_sdt_filename(mmc, prefix,args):
+    if args.config:
+        mmc.setProperty("OSc-LSM", "BH-TCSPC-FLIMFileNamePrefix", prefix)
 
 
 def rename_sdt_files(args, prefix):
-    if args.save is None:
+    if args.save is None or not args.config:
         return
     extensions = ("spc", "sdt", "json")
     for ext in extensions:
@@ -148,7 +149,7 @@ class PMTCheckingEngine(MDAEngine):
         sdt_prefix = make_sdt_prefix(self.__args, self.__event_counter)
         self.__event_counter += 1
 
-        set_sdt_filename(self.mmcore, sdt_prefix)
+        set_sdt_filename(self.mmcore, sdt_prefix,self.__args)
 
         result = super().exec_event(event)
         result = list(result)  # Originally a generator
