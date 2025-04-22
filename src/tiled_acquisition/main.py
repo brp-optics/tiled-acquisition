@@ -7,6 +7,7 @@ import time
 import numpy as np
 from pymmcore_plus import CMMCorePlus
 from pymmcore_plus.mda import MDAEngine
+from pyometiff import OMETIFFWriter
 from useq import MDAEvent, MDASequence, TIntervalLoops
 
 
@@ -111,7 +112,28 @@ def make_sdt_prefix(args, number):
 
 def set_sdt_filename(mmc, prefix):
     mmc.setProperty("OSc-LSM", "BH-TCSPC-FLIMFileNamePrefix", prefix)
+    
+def create_tile_config(args,prefix,coords):
 
+    filename = f"{prefix}"
+    #print(f"filename: {filename.split("/")[1]}")
+    #print(f"this is x y:{coords[0][1].x_pos} and {coords[0][1].y_pos}")
+    tile_config_row = (f"{filename.split("/")[-1]}.tif; ; ({coords[0][1].x_pos},{coords[0][1].y_pos})")
+    #print(tile_config_row)
+    write_tile_config(args, tile_config_row,filename.split("/")[-1])
+    return
+
+def write_tile_config(args,tile_config_row,position):
+    
+    # FIXME: @Helen
+    # - move this before acquisition
+    # but need coords info from result for stage?
+
+    if Path(f"{args.save}/tile_config.txt").exists() and position=='pos_0000':
+        raise RuntimeError("Tile config file already exists")
+
+    with open(f"{args.save}/tile_config.txt","a") as text_file:
+        text_file.write(tile_config_row+ "\n")
 
 def rename_sdt_files(args, prefix):
     if args.save is None:
@@ -122,6 +144,45 @@ def rename_sdt_files(args, prefix):
         renamed = f"{prefix}.{ext}"
         os.rename(original, renamed)
 
+#@Helen tiff save needs updating
+def save_tiff_image_test(file,values):
+    imvalues = []
+    imgarray = [np.array(p.image) for p in values]
+    imvalues = np.stack(imgarray)
+    
+    imvalues = np.array(imvalues)
+    #print(f"this is imvalues: {imvalues.shape}")
+    
+    metadata_dict = {
+        "PhysicalSizeX" : "0.7", #update
+        "PhysicalSizeXUnit" : "µm",
+        "PhysicalSizeY" : "0.7",    #update
+        "PhysicalSizeYUnit" : "µm",
+        "PhysicalSizeZ" : "0.0",
+        "PhysicalSizeZUnit" : "µm",
+        "Channels" : {
+            "FLIM" : {
+                "Name" : "FLIM740",
+                "SamplesPerPixel": 90,
+                "ExcitationWavelength": 740,
+                "ExcitationWavelengthUnit": "nm"
+            },
+        }
+    }
+
+    # our data in npy format
+    npy_array_data = np.uint8(imvalues)
+    # a string describing the dimension ordering
+    dimension_order = "TYX"
+    
+    writer = OMETIFFWriter(
+        fpath=f"E:\\Code\\MM_bigfovacqusition\\tiffimages\\{file.split("/")[-1]}.tif",
+        dimension_order=dimension_order,
+        array=npy_array_data,
+        metadata=metadata_dict,
+        explicit_tiffdata=False)
+
+    writer.write()
 
 def read_poslist(filename):
     with open(filename, newline="") as f:
@@ -154,6 +215,9 @@ class PMTCheckingEngine(MDAEngine):
         result = list(result)  # Originally a generator
 
         rename_sdt_files(self.__args, sdt_prefix)
+        create_tile_config(args, sdt_prefix,result)
+
+        save_tiff_image_test(sdt_prefix,result)
 
         for image in unaccumulate_images([p.image for p in result]):
             if looks_like_pmt_shut_off(image):
