@@ -1,0 +1,5 @@
+..\tile-coords\positions_out_center_0_0.csv
+--config=C:\Users\lociuser\code\loci-microscopes\MMConfigs\SLIM\OpenScan-DualDet-PMTControl.cfg
+--frames=2
+--save=test-save
+--no-sync-check
