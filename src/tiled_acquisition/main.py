@@ -177,7 +177,7 @@ def save_tiff_image_test(file,values):
     dimension_order = "TYX"
     
     writer = OMETIFFWriter(
-        fpath=f"E:\\Code\\MM_bigfovacqusition\\tiffimages\\{file.split("/")[-1]}.tif",
+        fpath=rf"D:\UserData\HelenWilson\20250814_HDIM\hdim_trial2\thirteenbeads_coverslip_water\data_tif\{file.split("/")[-1]}.tif",
         dimension_order=dimension_order,
         array=npy_array_data,
         metadata=metadata_dict,
@@ -216,7 +216,7 @@ class PMTCheckingEngine(MDAEngine):
         result = list(result)  # Originally a generator
 
         rename_sdt_files(self.__args, sdt_prefix)
-        create_tile_config(args, sdt_prefix,result)
+        create_tile_config(self.__args, sdt_prefix,result)
 
         save_tiff_image_test(sdt_prefix,result)
 
