@@ -1,2 +1,8 @@
 __pycache__
 test-save
+.venv
+.pytest_cache
+
+
+
+uv.lock
