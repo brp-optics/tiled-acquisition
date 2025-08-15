@@ -72,10 +72,11 @@ def setup_hardware(args):
 
     if args.config:
         mmc.setConfig("Channels", "PhotonCounting Only")
-        mmc.setConfig("FilterWheel", "457-50")
+        mmc.setConfig("FilterWheel", "680SP")
         mmc.setConfig("Lens", "20X 0.75 Nikon")
         mmc.setConfig("Resolution (pixels)", str(args.resolution))
         mmc.setProperty("NIDAQAO-Dev2/ao1", "Voltage", args.eom)
+        mmc.setProperty("OSc-LSM", "LSM-ZoomFactor", 2)
         mmc.setProperty("DCCModule2", "C3_GainHV", args.pmtgain)
         if args.no_sync_check:
             mmc.setConfig("FLIMCheckSync", "No")
