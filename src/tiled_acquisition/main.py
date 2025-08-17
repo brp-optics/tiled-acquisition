@@ -173,7 +173,7 @@ def save_tiff_image_test(file,values):
     }
 
     # our data in npy format
-    npy_array_data = np.uint8(imvalues)
+    npy_array_data = np.uint16(imvalues)
     # a string describing the dimension ordering
     dimension_order = "TYX"
     
