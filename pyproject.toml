@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.2.4",
     "pymmcore-plus>=0.13.5",
+    "pyometiff>=1.1.4",
     "useq-schema>=0.7.1",
 ]
 
